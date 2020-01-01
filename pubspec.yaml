@@ -39,13 +39,9 @@ dev_dependencies:
   webview_flutter: 
   url_launcher: ^4.0.2
   intl:
-  dynamic_theme:
-  device_info:
-  cached_network_image: 2.0.0-rc
-  timeago:
-  flutter_cache_manager:
   random_string:
-
+  place_picker:
+  geolocator:
 
 
 # For information on the generic Dart part of this file, see the

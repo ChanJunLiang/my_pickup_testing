@@ -8,7 +8,6 @@ import 'package:my_pickup/jobdetail.dart';
 import 'package:my_pickup/job.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'SlideRightRoute.dart';
-import 'package:my_pickup/job2.dart';
 
 double perpage = 1;
 
@@ -26,23 +25,30 @@ class _JobListState extends State<JobList> {
 
   List data;
 
+  void initState() {
+    super.initState();
+    refreshKey = GlobalKey<RefreshIndicatorState>();
+    
+  }
+
   @override
   Widget build(BuildContext context) {
     
    SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(statusBarColor: Colors.orange));
+        SystemUiOverlayStyle(statusBarColor: Colors.teal));
     return MaterialApp(
       debugShowCheckedModeBanner: false,
         home: Scaffold(
             resizeToAvoidBottomPadding: false,
-           
-            body: RefreshIndicator(
+              
+              body: RefreshIndicator(
               key: refreshKey,
-              color: Colors.orange,
+              color: Colors.deepOrange,
               onRefresh: () async {
                 await refreshList();
               },
-              child: ListView.builder(
+
+              child:ListView.builder(
                   
                   itemCount: data == null ? 1 : data.length + 1,
                   itemBuilder: (context, index) {
@@ -52,23 +58,20 @@ class _JobListState extends State<JobList> {
                           children: <Widget>[
                                 Column(
                                 children: <Widget>[
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Center(
-                                    child: Text("MyPickup",
-                                        style: TextStyle(
-                                            fontSize: 24,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white)),
-                                  ),
-                                  SizedBox(height: 10),
                                   Container(
-                                    width: 300,
-                                    height: 140,
-                                    child: Card(
-                                      child: Padding(
-                                        padding: EdgeInsets.all(5.0),
+                                    padding: EdgeInsets.fromLTRB(10,10,10,5),
+                                    height: MediaQuery.of(context).size.height/5,
+                                    width: MediaQuery.of(context).size.width,
+                                    color: Colors.teal[50],
+                  
+                                child: Container(
+                                  padding: EdgeInsets.fromLTRB(15,15,15,5),
+                                  decoration: BoxDecoration(
+                                  color: Colors.teal[100],
+                                  border: Border.all(color: Colors.teal[300]),
+                                  borderRadius: BorderRadius.all(
+                                  Radius.circular(10.0)),
+                                  boxShadow: [BoxShadow(blurRadius: 10,color: Colors.teal[400],offset: Offset(0,0))]),
                                         child: Column(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceEvenly,
@@ -133,27 +136,31 @@ class _JobListState extends State<JobList> {
                                             
                                           ],
                                         ),
-                                      ),
-                                    ),
+                                  ),),
+
+                                  SizedBox(
+                                    height: 15,
                                   ),
+
+                                  Container(
+                                    padding: EdgeInsets.fromLTRB(15,5,15,5),
+                                    color: Colors.teal[400],
+                                    child: Center(
+                                    child: Text("Job List Today",
+                                    style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white)
+                                    ),),                            
+                                    ),
+
+                                    SizedBox(
+                                      height: 4,
+                                    ),
+
                                 ],
                               ),
                       
-              
-                            
-                            SizedBox(
-                              height: 4,
-                            ),
-                            Container(
-                              color: Colors.orange,
-                              child: Center(
-                                child: Text("Jobs Available Today",
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white)),
-                              ),
-                            ),
                         ])
                       );
                     }                   
@@ -176,21 +183,21 @@ class _JobListState extends State<JobList> {
                       child: Card(
                         elevation: 2,
                         child: InkWell(
-                          onTap: () => _onJobDetail(
-                            data[index]['jobId'],
-                            data[index]['jobName'],
-                            data[index]['jobPrice'],
-                            data[index]['jobDesc'],
-                            data[index]['jobLocation'],
-                            data[index]['jobDestination'],
-                            data[index]['jobOwner'],
-                            data[index]['jobDate'],
-                            data[index]['driverEmail'],
+                          onTap: ()=> _onJobDetail(
+                            data[index]['job_id'],
+                            data[index]['job_name'],
+                            data[index]['job_price'],
+                            data[index]['job_desc'],
+                            data[index]['job_loc_names'],
+                            data[index]['job_location'],
+                            data[index]['job_destination'],
+                            data[index]['job_owner'],
+                            data[index]['job_date'],
+                            data[index]['driver_email'],
+                            data[index]['job_rating'],
                             widget.driver.name,
                             widget.driver.credit,
-                            
                           ),
-                          onLongPress: _onJobDelete,
                           child: Padding(
                             padding: const EdgeInsets.all(2.0),
                             child: Row(
@@ -204,14 +211,14 @@ class _JobListState extends State<JobList> {
                                       image: DecorationImage(
                                     fit: BoxFit.fill,
                                     image: AssetImage(
-                                    'assets/images/defaultpic.png'
+                                    'assets/images/gifhary@pickupandlaundry.com.jpg'
                                   )))),
                                 Expanded(
                                   child: Container(
                                     child: Column(
                                       children: <Widget>[
                                         Text(
-                                            data[index]['job_cust']
+                                            data[index]['job_name']
                                                 .toString()
                                                 .toUpperCase(),
                                             style: TextStyle(
@@ -221,11 +228,8 @@ class _JobListState extends State<JobList> {
                                         SizedBox(
                                           height: 5,
                                         ),
-                                        Text("Location " + data[index]['job_location']),
-                                        SizedBox(
-                                          height: 5,
-                                        ),
-                                        Text("Destination " + data[index]['job_destination']),
+                                        Text("Date " + data[index]['job_date']),
+                                        
                                       ],
                                     ),
                                   ),
@@ -237,12 +241,12 @@ class _JobListState extends State<JobList> {
                       ),
                     );
                   }),
-            )));
+    )));
   }
 
 
   Future<String> makeRequest() async {
-    String urlLoadJobs = "http://pickupandlaundry.com/my_pickup/gifhary/load_jobs.php";
+    String urlLoadJobs = "http://pickupandlaundry.com/my_pickup/gifhary/load_all_job_liang.php";
     ProgressDialog pr = new ProgressDialog(context,
         type: ProgressDialogType.Normal, isDismissible: false);
     pr.style(message: "Loading Jobs");
@@ -276,35 +280,40 @@ class _JobListState extends State<JobList> {
   }
 
   void _onJobDetail(
-      String jobId,
-      String jobName,
-      String jobPrice,
-      String jobDesc,
-      String jobLocation,
-      String jobDestination,
-      String jobOwner,
-      String jobDate,
-      String driverEmail,
+      String job_id,
+      String job_name,
+      String job_price,
+      String job_desc,
+      String job_loc_names,
+      String job_location,
+      String job_destination,
+      String job_owner,
+      String job_date,
+      String driver_email,
+      String job_rating,
       String name,
       String credit) {
-    Job2 job2 = new Job2(
-        jobId: jobId,
-        jobName: jobName,
-        jobPrice: jobPrice,
-        jobDesc: jobDesc,
-        jobLocation: jobLocation,
-        jobDestination: jobDestination,
-        jobOwner: jobOwner,
-        driverEmail: driverEmail,
+    Job job = new Job(
+        job_id: job_id,
+        job_name: job_name,
+        job_price: job_price,
+        job_desc: job_desc,
+        job_loc_names: job_loc_names,
+        job_location: job_location,
+        job_destination: job_destination,
+        job_owner: job_owner,
+        job_date: job_date,
+        driver_email: driver_email,
+        job_rating: job_rating,
        );
     //print(data);
     
-    Navigator.push(context, SlideRightRoute(page: JobDetail(job2: job2, driver: widget.driver)));
+    Navigator.push(context, SlideRightRoute(page: JobDetail(job: job, driver: widget.driver)));
   }
 
 
   void _onJobDelete() {
     print("Delete");
   }
-}
 
+}

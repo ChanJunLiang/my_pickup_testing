@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:my_pickup/joblist2.dart';
 import 'package:my_pickup/loginscreen.dart';
 import 'package:my_pickup/joblist.dart';
 import 'package:my_pickup/yourjob.dart';

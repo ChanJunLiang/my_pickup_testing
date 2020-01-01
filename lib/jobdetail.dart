@@ -5,20 +5,31 @@ import 'package:flutter/material.dart';
 import 'package:my_pickup/driver.dart';
 import 'package:toast/toast.dart';
 import 'package:progress_dialog/progress_dialog.dart';
-import 'job2.dart';
+import 'package:my_pickup/job.dart';
 import 'mainscreen.dart';
+import 'package:geolocator/geolocator.dart';
 
+final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+String _currentAddress = "Searching your current location...";
 class JobDetail extends StatefulWidget {
-  final Job2 job2;
+  final Job job;
   final Driver driver;
+ 
 
-  const JobDetail({Key key, this.job2, this.driver}) : super(key: key);
+  const JobDetail({Key key, this.job, this.driver}) : super(key: key);
 
   @override
   _JobDetailState createState() => _JobDetailState();
 }
 
 class _JobDetailState extends State<JobDetail> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _getAddressFromLatLng();
+  }
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
@@ -35,7 +46,7 @@ class _JobDetailState extends State<JobDetail> {
             child: Container(
               padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
               child: DetailInterface(
-                job2: widget.job2,
+                job: widget.job,
                 driver: widget.driver,
               ),
             ),
@@ -53,23 +64,52 @@ class _JobDetailState extends State<JobDetail> {
         ));
     return Future.value(false);
   }
+
+  _getAddressFromLatLng() async {
+    try {
+      String coordinates = widget.job.job_location;
+      List<String> latLong = coordinates.split(",");
+      double latitude = double.parse(latLong[0]);
+      double longitude = double.parse(latLong[1]);
+
+
+      List<Placemark> p = await geolocator.placemarkFromCoordinates(
+          latitude, longitude);
+
+      Placemark place = p[0];
+
+      setState(() {
+        _currentAddress =
+            "${place.name},${place.locality}, ${place.postalCode}, ${place.country}";
+      });
+      print(_currentAddress);
+    } catch (e) {
+      print(e);
+    }
+  }
 }
 
 class DetailInterface extends StatefulWidget {
-  final Job2 job2;
+  final Job job;
   final Driver driver;
-  DetailInterface({this.job2, this.driver});
+  DetailInterface({this.job, this.driver});
 
   @override
   _DetailInterfaceState createState() => _DetailInterfaceState();
 }
 
 class _DetailInterfaceState extends State<DetailInterface> {
-  
 
+  @override
+  void initState() {
+    super.initState();
+    _getAddressFromLatLng();
+  }
+ 
 
   @override
   Widget build(BuildContext context) {
+    
     return Column(
       children: <Widget>[
         Center(),
@@ -81,12 +121,11 @@ class _DetailInterfaceState extends State<DetailInterface> {
         SizedBox(
           height: 10,
         ),
-        Text(widget.job2.jobName.toUpperCase(),
+        Text(widget.job.job_name.toUpperCase(),
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
             )),
-        Text(widget.job2.jobId),
         Container(
           alignment: Alignment.topLeft,
           child: Column(
@@ -99,28 +138,45 @@ class _DetailInterfaceState extends State<DetailInterface> {
                 TableRow(children: [
                   Text("Job Description",
                       style: TextStyle(fontWeight: FontWeight.bold)),
-                  Text(widget.job2.jobDesc),
+                  Text(widget.job.job_desc),
                 ]),
                 TableRow(children: [
                   Text("Job Location",
                       style: TextStyle(fontWeight: FontWeight.bold)),
-                  Text(widget.job2.jobLocation),
+                  Text(widget.job.job_loc_names),
+                ]),
+                TableRow(children: [
+                  Text("Job Location",
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(widget.job.job_location),
                 ]),
                 TableRow(children: [
                   Text("Job Destination",
                       style: TextStyle(fontWeight: FontWeight.bold)),
-                  Text(widget.job2.jobDestination),
+                  Text(widget.job.job_destination),
                 ]),
                 TableRow(children: [
                   Text("Customer",
                       style: TextStyle(fontWeight: FontWeight.bold)),
-                  Text(widget.job2.jobOwner),
+                  Text(widget.job.job_owner),
                 ]),
                 TableRow(children: [
                   Text("Date",
                       style: TextStyle(fontWeight: FontWeight.bold)),
-                  Text(widget.job2.jobDate),
+                  Text(widget.job.job_date),
                 ]),
+                TableRow(children: [
+                  Text("Rating",
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(widget.job.job_rating),
+                ]),
+                TableRow(children: [
+                  Text("Address",
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                 Text(_currentAddress),
+                ]),
+                
+
                 
               ]),
               SizedBox(
@@ -176,7 +232,7 @@ class _DetailInterfaceState extends State<DetailInterface> {
       builder: (BuildContext context) {
         // return object of type Dialog
         return AlertDialog(
-          title: new Text("Accept " + widget.job2.jobId + " from " + widget.job2.jobOwner),
+          title: new Text("Accept " + widget.job.job_id + " from " + widget.job.job_owner),
           content: new Text("Are your sure?"),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
@@ -199,6 +255,28 @@ class _DetailInterfaceState extends State<DetailInterface> {
     );
   }
 
+  _getAddressFromLatLng() async {
+    try {
+      String coordinates = widget.job.job_location;
+      List<String> latLong = coordinates.split(",");
+      double latitude = double.parse(latLong[0]);
+      double longitude = double.parse(latLong[1]);
+
+
+      List<Placemark> p = await geolocator.placemarkFromCoordinates(
+          latitude, longitude);
+
+      Placemark place = p[0];
+
+      setState(() {
+        _currentAddress =
+            "${place.name},${place.locality}, ${place.postalCode}, ${place.country}";
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
   Future<String> acceptRequest() async {
     String urlLoadJobs = "http://pickupandlaundry.com/my_pickup/gifhary/acceptjobliang.php";
     ProgressDialog pr = new ProgressDialog(context,
@@ -206,7 +284,7 @@ class _DetailInterfaceState extends State<DetailInterface> {
     pr.style(message: "Accepting Job");
     pr.show();
     http.post(urlLoadJobs, body: {
-      "job_id": widget.job2.jobId,
+      "job_id": widget.job.job_id,
       "email": widget.driver.email,
       "credit": widget.driver.credit,
       
