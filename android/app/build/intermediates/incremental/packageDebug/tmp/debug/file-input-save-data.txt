@@ -1,6 +1,6 @@
 #Internal package file, do not edit.
-#Thu Jan 02 00:22:47 SGT 2020
-4.path=lib/x86_64/libflutter.so
+#Thu Jan 02 03:51:19 SGT 2020
+4.path=lib/armeabi-v7a/libflutter.so
 13.baseType=DIRECTORY
 8.set=ASSET
 6.path=flutter_assets/AssetManifest.json
@@ -36,7 +36,7 @@
 7.baseType=DIRECTORY
 3.path=flutter_assets/assets/images/carpic.png
 10.set=ASSET
-5.path=lib/armeabi-v7a/libflutter.so
+5.path=lib/x86_64/libflutter.so
 0.base=D\:\\sem5\\mobile\\my_pickup\\android\\app\\build\\intermediates\\merged_assets\\debug\\mergeDebugAssets\\out
 7.path=flutter_assets/assets/images/gifhary@pickupandlaundry.com.jpg
 11.path=flutter_assets/vm_snapshot_data
